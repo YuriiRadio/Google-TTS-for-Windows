@@ -1,6 +1,6 @@
 <h1>Google SAPI for Windows on VBScript</h1>
 
-Generates a mp3 file from the text with the help of Google.
+Generates a mp3 file from the text using Google SAPI.
 
 Example of use In the bat file
 
