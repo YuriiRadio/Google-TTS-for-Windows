@@ -1,4 +1,14 @@
 Option Explicit
+'Google SAPI for Windows on VBScript
+'yurii.radio@gmail.com
+'Yurii Radio - 2017
+
+'You can run the script with a command-line option:
+'	/lang:uk
+'	/utf8:false
+
+'12.08.2017 fix - strScriptPath
+'23.11.2017 add parameter - utf8 (default True)
 
 Dim strInputText
 Dim strLang
@@ -14,19 +24,28 @@ Dim objXMLHTTP
 Dim objStream
 Dim objShell
 
+Dim bUtf8
+
+'Initialization section
+strLang = "uk" 						'default language
+bUtf8 = True 						'default UTF8 Encode (True, False)
+strInputText = "Синтезатор Google" 	'default Text
+strMp3FileName = "response.mp3" 	'default mp3 file
+'End Initialization
+
 Set objFSO = CreateObject("Scripting.FileSystemObject")
-strScriptPath = objFSO.GetAbsolutePathName(".\") & "\"
-'strSaveDir = "D:\Temp\Tests\"
+strScriptPath = objFSO.GetFile(WScript.ScriptFullName).ParentFolder
 strSaveDir = objFSO.GetSpecialFolder(2) & "\"
 
 Set objArgs = WScript.Arguments
 If objArgs.Named.Exists("lang") Then
 	strLang = objArgs.Named("lang")
-else
-	strLang = "uk"
 End If
 
-strInputText = "Синтезатор Google"
+If objArgs.Named.Exists("utf8") And objArgs.Named("utf8") = "false" Then
+	bUtf8 = False
+End If
+
 If objArgs.Unnamed.Count > 0 Then
 	If objArgs.Unnamed(0) <> "" Then
 		strInputText = ""
@@ -34,13 +53,14 @@ If objArgs.Unnamed.Count > 0 Then
 			strInputText = strInputText & objArgs.Unnamed(i)
 			If (objArgs.Unnamed.Count - 1) > i Then strInputText = strInputText & Chr(32) End If
 		Next
-		strInputText = UTF8Encode(strInputText)
+		If bUtf8 Then
+			strInputText = UTF8Encode(strInputText)
+		End If
 		strInputText = URLEncode(strInputText)
 	End If
 End If
 'MsgBox strInputText: WScript.Quit
 
-strMp3FileName = "response.mp3"
 strURL = "https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&q=" & strInputText & "&tl=" & strLang
 
 Set objXMLHTTP = CreateObject("Microsoft.XMLHTTP")
@@ -53,6 +73,7 @@ objStream.open
 objStream.write objXMLHTTP.responseBody
 objStream.savetofile strSaveDir & strMp3FileName, 2
 objStream.Close
+
 Set objStream = Nothing
 Set objXMLHTTP = Nothing
 
@@ -120,37 +141,4 @@ Function URLEncode(sStr)
             End Select
         End If
     Next
-End Function
-
-Function EncodeWithoutBOM (strText)
-	Const adSaveCreateNotExist = 1
-	Const adSaveCreateOverWrite = 2
-	Const adTypeBinary = 1
-	Const adTypeText   = 2
-
-	Dim objStreamUTF8      : Set objStreamUTF8      = CreateObject("ADODB.Stream")
-	Dim objStreamUTF8NoBOM : Set objStreamUTF8NoBOM = CreateObject("ADODB.Stream")
-
-	With objStreamUTF8
-	  .Open
-	  .Type    = adTypeText
-	  .Charset = "UTF-8"
-	  .WriteText strText
-	  .Position = 0
-	  .SaveToFile "testUTF8.txt", adSaveCreateOverWrite
-	  .Type     = adTypeBinary
-	  .Position = 3
-	End With
-
-	With objStreamUTF8NoBOM
-	  .Open
-	  .Type  = adTypeBinary
-	  objStreamUTF8.CopyTo objStreamUTF8NoBOM
-	  .SaveToFile "testUTF8NoBOM.txt", adSaveCreateOverWrite
-	  .Type    = adTypeText
-	  EncodeWithoutBOM = .ReadText
-	End With
-	
-	objStreamUTF8.Close
-	objStreamUTF8NoBOM.Close
 End Function
