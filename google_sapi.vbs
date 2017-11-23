@@ -1,7 +1,8 @@
-Option Explicit
+'*********************************************************
 'Google SAPI for Windows on VBScript
 'yurii.radio@gmail.com
 'Yurii Radio - 2017
+'*********************************************************
 
 'You can run the script with a command-line option:
 '	/lang:uk
@@ -9,6 +10,8 @@ Option Explicit
 
 '12.08.2017 fix - strScriptPath
 '23.11.2017 add parameter - utf8 (default True)
+
+Option Explicit
 
 Dim strInputText
 Dim strLang
@@ -51,7 +54,9 @@ If objArgs.Unnamed.Count > 0 Then
 		strInputText = ""
 		Dim i: For i = 0 To objArgs.Unnamed.Count - 1
 			strInputText = strInputText & objArgs.Unnamed(i)
-			If (objArgs.Unnamed.Count - 1) > i Then strInputText = strInputText & Chr(32) End If
+			If (objArgs.Unnamed.Count - 1) > i Then
+				strInputText = strInputText & Chr(32)
+			End If
 		Next
 		If bUtf8 Then
 			strInputText = UTF8Encode(strInputText)
@@ -65,27 +70,27 @@ strURL = "https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&q=" &
 
 Set objXMLHTTP = CreateObject("Microsoft.XMLHTTP")
 objXMLHTTP.Open "GET", strURL, False
-objXMLHTTP.Send
+objXMLHTTP.Send ' max 200 chars
+'MsgBox objXMLHTTP.Status: WScript.Quit
 
-Set objStream = createobject("Adodb.Stream")
-objStream.type = 1
-objStream.open
-objStream.write objXMLHTTP.responseBody
-objStream.savetofile strSaveDir & strMp3FileName, 2
-objStream.Close
+If objXMLHTTP.Status = 200 Then
+	Set objStream = createobject("Adodb.Stream")
+	objStream.type = 1
+	objStream.open
+	objStream.write objXMLHTTP.responseBody
+	objStream.savetofile strSaveDir & strMp3FileName, 2
+	objStream.Close
+	Set objStream = Nothing
 
-Set objStream = Nothing
+	Set objShell = WScript.CreateObject("WScript.Shell")
+	strCommand = "madplay.exe " & strSaveDir & strMp3FileName
+	objShell.Run strCommand, 0, true
+
+	objFSO.DeleteFile(strSaveDir & strMp3FileName)
+	Set objShell = Nothing
+End If
+
 Set objXMLHTTP = Nothing
-
-Set objShell = WScript.CreateObject("WScript.Shell")
-strCommand = "madplay.exe " & strSaveDir & strMp3FileName
-objShell.Run strCommand, 0, true
-
-'strCommand = scriptPath & "@del " & strMp3FileName
-'objShell.Run strCommand, 0, false
-objFSO.DeleteFile(strSaveDir & strMp3FileName)
-
-Set objShell = Nothing
 Set objFSO = Nothing
 
 Function UTF8Encode(s)
