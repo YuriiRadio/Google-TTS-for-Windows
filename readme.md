@@ -12,7 +12,7 @@ uk - generation language
 <br />
 utf8 - default UTF8 Encode (True, False)
 
-Example of use In the bat file:
+Example of use In the bat file: (use CP866)
 <code>
 <pre>
 Set f_time=%time:~0,5%
