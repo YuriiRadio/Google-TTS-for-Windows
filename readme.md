@@ -14,6 +14,7 @@ utf8 - default UTF8 Encode (True, False)
 
 Example of use In the bat file:
 <code>
+<pre>
 Set f_time=%time:~0,5%
 Set h_time=%time:~0,2%
 
@@ -36,6 +37,7 @@ Rem доброї ноч?
 If %h_time% GEQ 23 Set greet=доброї ночi
 
 start /MIN wscript google_sapi.vbs /lang:uk Юрiю %greet%. Система Успiшно завантажена. Пiдключення до Iнтернету встановлено. Поточний час %f_time%
+</pre>
 </code>
 
 <b>Yurii Radio - 2017</b>
