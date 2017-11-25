@@ -20,6 +20,7 @@ Dim strURL
 Dim strSaveDir
 Dim strScriptPath
 Dim strCommand
+Dim strPlayPrg
 
 Dim objArgs
 Dim objFSO
@@ -29,16 +30,18 @@ Dim objShell
 
 Dim bUtf8
 
+Set objFSO = CreateObject("Scripting.FileSystemObject")
+
 'Initialization section
-strLang = "uk" 						'default language
-bUtf8 = True 						'default UTF8 Encode (True, False)
-strInputText = "Синтезатор Google" 	'default Text
-strMp3FileName = "response.mp3" 	'default mp3 file
+strLang = "uk" 						'Default language
+bUtf8 = True 						'Default UTF8 Encode (True, False)
+strInputText = "Синтезатор Google" 	'Default Text
+strMp3FileName = "response.mp3" 	'Default mp3 file
+strPlayPrg = "madplay.exe"			'Console program for mp3 playback. Must be in the script directory
+strScriptPath = objFSO.GetFile(WScript.ScriptFullName).ParentFolder 'Script Path
+strSaveDir = objFSO.GetSpecialFolder(2)								'Save Dir (%Temp%)
 'End Initialization
 
-Set objFSO = CreateObject("Scripting.FileSystemObject")
-strScriptPath = objFSO.GetFile(WScript.ScriptFullName).ParentFolder
-strSaveDir = objFSO.GetSpecialFolder(2) & "\"
 
 Set objArgs = WScript.Arguments
 If objArgs.Named.Exists("lang") Then
@@ -78,15 +81,15 @@ If objXMLHTTP.Status = 200 Then
 	objStream.type = 1
 	objStream.open
 	objStream.write objXMLHTTP.responseBody
-	objStream.savetofile strSaveDir & strMp3FileName, 2
+	objStream.savetofile strSaveDir & Chr(47) & strMp3FileName, 2
 	objStream.Close
 	Set objStream = Nothing
 
 	Set objShell = WScript.CreateObject("WScript.Shell")
-	strCommand = "madplay.exe " & strSaveDir & strMp3FileName
+	strCommand = strScriptPath & Chr(47) & strPlayPrg & Chr(32) & strSaveDir & Chr(47) & strMp3FileName
 	objShell.Run strCommand, 0, true
 
-	objFSO.DeleteFile(strSaveDir & strMp3FileName)
+	objFSO.DeleteFile(strSaveDir & Chr(47) & strMp3FileName)
 	Set objShell = Nothing
 End If
 

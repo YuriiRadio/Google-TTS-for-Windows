@@ -20,10 +20,10 @@ Set h_time=%time:~0,2%
 
 Rem EQU - дорiвнює
 Rem NEQ - не дорiвнює
-Rem LSS - меноше
-Rem LEQ - меньше або дор?внює
+Rem LSS - меньше
+Rem LEQ - меньше або дорiвнює
 Rem GTR - бiльше
-Rem GEQ - бiльше або дор?внює
+Rem GEQ - бiльше або дорiвнює
 
 Rem доброї ноч?
 If %h_time% GEQ 00 Set greet=доброї ночi
