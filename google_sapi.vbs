@@ -5,11 +5,13 @@
 '*********************************************************
 
 'You can run the script with a command-line option:
-'	/lang:uk
-'	/utf8:false
+'	/lang:uk 	- languge
+'	/utf8:false	- disable utf8 encode
+'	/clipboard	- read text from clipboard
 
 '12.08.2017 fix - strScriptPath
-'23.11.2017 add parameter - utf8 (default True)
+'23.11.2017 add parameter - /utf8 (disable utf8 encode)
+'28.11.2017 add parameter - /clipboard (read text from clipboard)
 
 Option Explicit
 
@@ -29,12 +31,14 @@ Dim objStream
 Dim objShell
 
 Dim bUtf8
+Dim bClipboard
 
 Set objFSO = CreateObject("Scripting.FileSystemObject")
 
 'Initialization section
 strLang = "uk" 						'Default language
-bUtf8 = True 						'Default UTF8 Encode (True, False)
+bUtf8 = True 						'Default UTF8 Encode
+bClipboard = False					'Dufault no read clipboard
 strInputText = "Синтезатор Google" 	'Default Text
 strMp3FileName = "response.mp3" 	'Default mp3 file
 strPlayPrg = "madplay.exe"			'Console program for mp3 playback. Must be in the script directory
@@ -52,21 +56,37 @@ If objArgs.Named.Exists("utf8") And objArgs.Named("utf8") = "false" Then
 	bUtf8 = False
 End If
 
+' Get clipboard text
+If objArgs.Named.Exists("clipboard") Then
+	bClipboard = True
+	Dim objHTML
+	Set objHTML = CreateObject("htmlfile")
+	strInputText = objHTML.ParentWindow.ClipboardData.GetData("text")
+End If
+
 If objArgs.Unnamed.Count > 0 Then
 	If objArgs.Unnamed(0) <> "" Then
-		strInputText = ""
+		If Not bClipboard Then
+			strInputText = ""
+		End If
 		Dim i: For i = 0 To objArgs.Unnamed.Count - 1
-			strInputText = strInputText & objArgs.Unnamed(i)
 			If (objArgs.Unnamed.Count - 1) > i Then
-				strInputText = strInputText & Chr(32)
+				strInputText = strInputText & objArgs.Unnamed(i) & Chr(32)
+			else
+				strInputText = strInputText & objArgs.Unnamed(i)
 			End If
 		Next
-		If bUtf8 Then
-			strInputText = UTF8Encode(strInputText)
-		End If
-		strInputText = URLEncode(strInputText)
+	Else
+		bUtf8 = False
 	End If
+Else
+	bUtf8 = False
 End If
+
+If bUtf8 Then
+	strInputText = UTF8Encode(strInputText)
+End If
+strInputText = URLEncode(strInputText)
 'MsgBox strInputText: WScript.Quit
 
 strURL = "https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&q=" & strInputText & "&tl=" & strLang
