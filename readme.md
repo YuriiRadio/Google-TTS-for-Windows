@@ -9,12 +9,16 @@ You can run the script with a command-line option:
 <b>/utf8:false</b>
 <br />
 <b>/clipboard</b>
+<br />
+<b>/cache</b>
 
 uk - generation language
 <br />
 utf8 - default UTF8 Encode (True, False)
 <br />
 clipboard - read text from clipboard
+<br />
+cache - caching
 
 You can download MADPlay from <a href="http://www.softpedia.com/get/Multimedia/Audio/Other-AUDIO-Tools/?utm_source=spd&utm_campaign=postdl_redir">here...</a>
 (The MADPlay application was developed to be a small, easy to use command line MP3 player / decoder that will allow you to decode and play MPEG audio file.)
