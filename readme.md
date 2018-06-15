@@ -1,6 +1,6 @@
-<h1>Google SAPI for Windows on VBScript</h1>
+<h1>Google TTS for Windows on VBScript</h1>
 
-Generates a mp3 file from the text using Google SAPI.
+Generates a mp3 file from the text using Google TTS, for any supported Google language
 
 You can run the script with a command-line option:
 
@@ -16,9 +16,11 @@ utf8 - default UTF8 Encode (True, False)
 <br />
 clipboard - read text from clipboard
 
+You can download MADPlay from <a href="http://www.softpedia.com/get/Multimedia/Audio/Other-AUDIO-Tools/?utm_source=spd&utm_campaign=postdl_redir">here...</a>
+(The MADPlay application was developed to be a small, easy to use command line MP3 player / decoder that will allow you to decode and play MPEG audio file.)
+
 Example of use In the bat file: (use CP866)
-<code>
-<pre>
+<code><pre>
 Set f_time=%time:~0,5%
 Set h_time=%time:~0,2%
 
@@ -41,7 +43,6 @@ Rem доброї ночi
 If %h_time% GEQ 23 Set greet=доброї ночi
 
 start /MIN wscript google_sapi.vbs /lang:uk Юрiю %greet%. Система Успiшно завантажена. Пiдключення до Iнтернету встановлено. Поточний час %f_time%
-</pre>
-</code>
+</pre></code>
 
 <b>Yurii Radio - 2017</b>
